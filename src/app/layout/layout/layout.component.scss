@@ -1,0 +1,25 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+
+
+.a-box {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  .routerLink {
+    color: brown;
+    font-size: 20px;
+    margin: 10px;
+  }
+
+}
+
+.layout-router {
+  height: calc(100% - 30px);
+  width: 100%;
+}
