@@ -68,7 +68,9 @@ export class GLTFLoaderComponent {
 
 
     const controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.addEventListener('change', this.render); // use if there is no animation loop
+    controls.addEventListener('change', () => {
+      that.renderer.render(that.scene, that.camera)
+    }); // use if there is no animation loop
     controls.minDistance = 2;
     controls.maxDistance = 10;
     controls.target.set(0, 0, - 0.2);

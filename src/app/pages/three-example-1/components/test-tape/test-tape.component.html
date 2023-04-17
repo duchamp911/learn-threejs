@@ -1,1 +1,9 @@
 <div class="content" #three></div>
+<div class="info">
+  <div>
+    两帧渲染时间间隔(毫秒): <b>{{ spt }}</b>
+  </div>
+  <div>
+    帧率FPS: <b>{{ 1000 / spt || "" }}</b>
+  </div>
+</div>
