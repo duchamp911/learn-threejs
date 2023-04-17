@@ -6,7 +6,6 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 
 
-
 @Component({
   selector: 'app-gltfloader',
   templateUrl: './gltfloader.component.html',
@@ -26,7 +25,7 @@ export class GLTFLoaderComponent {
 
   ngAfterViewInit(): void {
     this.init();
-    this.render();
+    // this.render();
   }
 
   init() {
