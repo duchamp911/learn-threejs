@@ -19,6 +19,13 @@ const routes: Routes = [
             (m) => m.ThreeExample1Module
           ),
       },
+      {
+        path: 'function-test',
+        loadChildren: () =>
+          import('./pages/function-test/function-test.module').then(
+            (m) => m.FunctionTestModule
+          ),
+      },
     ],
   },
 ];
@@ -27,4 +34,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

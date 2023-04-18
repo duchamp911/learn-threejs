@@ -2,7 +2,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 // 引入轨道控制器扩展库OrbitControls.js
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-
+//引入性能监视器stats.js
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 @Component({
   selector: 'app-test-tape',
@@ -21,23 +22,11 @@ export class TestTapeComponent {
 
   ngAfterViewInit(): void {
     this.init();
+    this.OnWindowResize();
   }
 
 
   init(): void {
-    // console.time()
-    // let i = 0;
-    // function render() {
-    //   if (i >= 120) {
-    //     console.timeEnd()
-    //     return
-    //   }
-    //   i += 1;
-    //   console.log('执行次数' + i);
-    //   requestAnimationFrame(render);//请求再次执行函数render
-    // }
-    // render();
-
 
     const that = this;
 
@@ -117,22 +106,81 @@ export class TestTapeComponent {
     //绑定DOM
     this.three.nativeElement.append(this.renderer.domElement);
 
-
+    // console.log(this.renderer.domElement)
 
     // 设置了渲染循环,相机控件OrbitControls就不用再通过事件change执行renderer.render(scene, camera);，毕竟渲染循环一直在执行renderer.render(scene, camera);
     // 渲染循环
-    const clock = new THREE.Clock();
+    // const clock = new THREE.Clock();
+    // // 渲染函数
+    // let countNum = 0;
+    // function render() {
+    //   countNum += 1;
+    //   that.spt = clock.getDelta() * 1000;//毫秒
+    //   if (countNum % 4 == 0) that.fpsTime = that.spt;
+    //   // console.log('两帧渲染时间间隔(毫秒)', clock.getDelta() * 1000);
+    //   // console.log('帧率FPS', 1000 / (clock.getDelta() * 1000));
+    //   that.renderer.render(that.scene, that.camera); //执行渲染操作
+    //   mesh.rotateY(0.01);//每次绕y轴旋转0.01弧度
+    //   requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
+    // }
+    // render();
+
+    this.OnStats(mesh);
+    this.addGetryTestPerformance();
+  }
+
+  fpsTime: number = 0;
+
+
+  /** 监听窗口尺寸变化 */
+  OnWindowResize() {
+    const that = this;
+    window.onresize = function () {
+      // 重置渲染器输出画布canvas尺寸
+      that.renderer.setSize(window.innerWidth, window.innerHeight);
+      // 全屏情况下：设置观察范围长宽比aspect为窗口宽高比
+      that.camera.aspect = window.innerWidth / window.innerHeight;
+      // 渲染器执行render方法的时候会读取相机对象的投影矩阵属性projectionMatrix
+      // 但是不会每渲染一帧，就通过相机的属性计算投影矩阵(节约计算资源)
+      // 如果相机的一些属性发生了变化，需要执行updateProjectionMatrix ()方法更新相机的投影矩阵
+      that.camera.updateProjectionMatrix();
+    };
+  }
+
+  /** 性能监视 */
+  OnStats(mesh: any): void {
+    const that = this;
+    //创建stats对象
+    const stats = new Stats();
+    //stats.domElement:web页面上输出计算结果,一个div元素，
+    this.three.nativeElement.append(stats.dom);
+    // document.body.appendChild(stats.dom);
     // 渲染函数
-    let countNum = 0;
     function render() {
-      countNum += 1;
-      that.spt = clock.getDelta() * 1000;//毫秒
-      console.log('两帧渲染时间间隔(毫秒)', clock.getDelta() * 1000);
-      console.log('帧率FPS', 1000 / (clock.getDelta() * 1000));
+      //requestAnimationFrame循环调用的函数中调用方法update(),来刷新时间
+      stats.update();
       that.renderer.render(that.scene, that.camera); //执行渲染操作
       mesh.rotateY(0.01);//每次绕y轴旋转0.01弧度
-      requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
+      requestAnimationFrame(render); //请求再次执行渲染函数render，渲染下一帧
     }
     render();
+  }
+
+  addGetryTestPerformance(): void {
+    // 随机创建大量的模型,测试渲染性能
+    const num = 1000; //控制长方体模型数量
+    for (let i = 0; i < num; i++) {
+      const geometry = new THREE.BoxGeometry(5, 5, 5);
+      const material = new THREE.MeshLambertMaterial({
+        color: 0x00ffff
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      // 随机生成长方体xyz坐标
+      const x = (Math.random() - 0.5) * 200
+      const y = (Math.random() - 0.5) * 200
+      const z = (Math.random() - 0.5) * 200
+      mesh.position.set(x, y, z)
+      this.scene.add(mesh); // 模型对象插入场景中
+    }
   }
 }
