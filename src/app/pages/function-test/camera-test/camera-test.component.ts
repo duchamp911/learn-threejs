@@ -30,6 +30,9 @@ export class CameraTestComponent {
 
     this.width = this.three.nativeElement.clientWidth;
     this.height = this.three.nativeElement.clientHeight;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setClearColor('#387DFF', 0.5); //设置背景颜色
+
 
     const geometry = new THREE.BoxGeometry(100, 100, 100);
     //材质对象Material
@@ -68,11 +71,24 @@ export class CameraTestComponent {
     const geometryList = [geometry1, geometry2, geometry3, geometry4, geometry5];
 
     for (let i = 0; i < 5; i++) {
+
       const mesh = new THREE.Mesh(geometryList[i], material); //网格模型对象Mesh
       // 沿着x轴分布
       mesh.position.set(200, (i + 1) * 200, 200);
       that.scene.add(mesh); //网格模型添加到场景中
     }
+
+    const geometry6 = new THREE.CylinderGeometry(50, 50, 100);
+    // 模拟镜面反射，产生一个高光效果
+    const material6 = new THREE.MeshPhongMaterial({
+      color: 0xff0000,
+      shininess: 20, //高光部分的亮度，默认30
+      specular: 0x444444, //高光部分的颜色
+    });
+    const mesh6 = new THREE.Mesh(geometry6, material6); //网格模型对象Mesh
+    // 沿着x轴分布
+    mesh6.position.set(400, 400, 400);
+    that.scene.add(mesh6); //网格模型添加到场景中
 
     // AxesHelper：辅助观察的坐标系
     const axesHelper = new THREE.AxesHelper(150);
@@ -106,7 +122,6 @@ export class CameraTestComponent {
     // 定义threejs输出画布的尺寸(单位:像素px)
     this.renderer.setSize(this.width, this.height); //设置three.js渲染区域的尺寸(像素px)
     this.renderer.render(this.scene, this.camera); //执行渲染操作
-
     //绑定DOM
     this.three.nativeElement.append(this.renderer.domElement);
 
@@ -117,6 +132,9 @@ export class CameraTestComponent {
     directionalLight.position.set(80, 100, -150);
     // 方向光指向对象网格模型mesh，可以不设置，默认的位置是0,0,0
     this.scene.add(directionalLight);
+    // DirectionalLightHelper：可视化平行光
+    const dirLightHelper = new THREE.DirectionalLightHelper(directionalLight, 20);
+    this.scene.add(dirLightHelper);
 
 
 
@@ -139,5 +157,10 @@ export class CameraTestComponent {
       // 如果相机的一些属性发生了变化，需要执行updateProjectionMatrix ()方法更新相机的投影矩阵
       that.camera.updateProjectionMatrix();
     };
+  }
+
+  antialias(): void {
+    this.renderer.antialias = this.renderer.antialias ? false : true;
+    console.log(this.renderer.antialias)
   }
 }

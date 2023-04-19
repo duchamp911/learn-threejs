@@ -153,6 +153,9 @@ export class TestTapeComponent {
     //创建stats对象
     const stats = new Stats();
     //stats.domElement:web页面上输出计算结果,一个div元素，
+    stats.dom.style.position = 'absolute';
+    stats.dom.style.left = '0px';
+    stats.dom.style.top = '0px';
     this.three.nativeElement.append(stats.dom);
     // document.body.appendChild(stats.dom);
     // 渲染函数

@@ -1,8 +1,18 @@
 :host {
   display: block;
   height: 100%;
+  position: relative;
 }
 
 .content {
   height: 100%;
+}
+
+.btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  color: #fff;
+  cursor: pointer;
 }
