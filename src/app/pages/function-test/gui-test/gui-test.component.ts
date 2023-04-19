@@ -30,11 +30,9 @@ export class GuiTestComponent {
   init(): void {
     const that = this;
 
-
     // AxesHelper：辅助观察的坐标系
     const axesHelper = new THREE.AxesHelper(150);
     this.scene.add(axesHelper);
-
 
     const geometry = new THREE.BoxGeometry(100, 100, 100);
     //材质对象Material
@@ -65,14 +63,13 @@ export class GuiTestComponent {
     const dirLightHelper = new THREE.DirectionalLightHelper(directionalLight, 20);
     this.scene.add(dirLightHelper);
 
-
     // CylinderGeometry：圆柱
     const geometry3 = new THREE.CylinderGeometry(50, 50, 100);
     //材质对象Material
     const material2 = new THREE.MeshLambertMaterial({
       color: 'red', //设置材质颜色
       transparent: true,//开启透明
-      opacity: 0.5,//设置透明度
+      opacity: 0.3,//设置透明度
       side: THREE.DoubleSide
     });
     const mesh = new THREE.Mesh(geometry3, material2);
@@ -85,10 +82,87 @@ export class GuiTestComponent {
     gui.domElement.style.right = '0px';
     gui.domElement.style.width = '300px';
     // gui界面上增加交互界面，改变obj对应属性
-    gui.add(ambient, 'intensity', 0, 2.0);
-    gui.add(mesh.position, 'x', 0, 180);
-    gui.add(mesh.position, 'y', 0, 180);
-    gui.add(mesh.position, 'z', 0, 180);
+    gui.add(ambient, 'intensity', 0, 2.0).name('环境光强度').step(0.1).onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera); //执行渲染操作
+    });
+    gui.add(mesh.position, 'x', {
+      left: -100,
+      center: 0,
+      right: 100
+      // 左: -100,//可以用中文
+      // 中: 0,
+      // 右: 100
+    }).name('X位置选择').onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera); //执行渲染操作
+    });
+    gui.add(mesh.position, 'y', [-100, 0, 100]).onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera); //执行渲染操作
+    });
+    gui.add(mesh.position, 'z', -500, 1000).onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera); //执行渲染操作
+    });
+    gui.add(directionalLight, 'intensity', 0, 2.0).name('平行光强度').onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera); //执行渲染操作
+    });
+    gui.addColor(mesh.material, 'color').onChange((value: any) => {
+      that.renderer.render(that.scene, that.camera);
+    });
+    const obj = {
+      bool: false,
+    };
+    // 改变的obj属性数据类型是布尔值，交互界面是单选框
+    gui.add(obj, 'bool').name('是否旋转').onChange((value: any) => {
+      obj.bool = value;
+    });
+
+    // 菜单分组，材质
+    const obj2 = {
+      color: 0x00ffff,// 材质颜色
+    };
+    const material6 = new THREE.MeshPhongMaterial({
+      color: 0xff0000,
+      shininess: 20, //高光部分的亮度，默认30
+      specular: 0x444444, //高光部分的颜色
+    });
+    // 创建材质子菜单
+    const matFolder = gui.addFolder('材质');
+    matFolder.close();
+    // 材质颜色color
+    matFolder.addColor(obj2, 'color').onChange(function (value: any) {
+      material6.color.set(value);
+      that.renderer.render(that.scene, that.camera);
+    });
+    // 材质高光颜色specular
+    matFolder.addColor(material6, 'specular').onChange(function (value: any) {
+      material6.specular.set(value);
+      that.renderer.render(that.scene, that.camera);
+    });
+
+    // 菜单分组，环境光子菜单
+    const ambientFolder = gui.addFolder('环境光');
+    ambientFolder.close();
+    // 环境光强度
+    ambientFolder.add(ambient, 'intensity', 0, 2);
+
+    // 菜单分组，平行光子菜单
+    const dirFolder = gui.addFolder('平行光');
+    dirFolder.close();
+    // 平行光强度
+    dirFolder.add(directionalLight, 'intensity', 0, 2);
+    const dirFolder2 = dirFolder.addFolder('位置');//子菜单的子菜单
+    dirFolder2.close();//关闭菜单
+    // 平行光位置
+    dirFolder2.add(directionalLight.position, 'x', -400, 2400);
+    dirFolder2.add(directionalLight.position, 'y', -400, 400);
+    dirFolder2.add(directionalLight.position, 'z', -400, 400);
+
+
+
+
+
+
+
+
 
 
 
@@ -104,9 +178,6 @@ export class GuiTestComponent {
       that.renderer.render(that.scene, that.camera); //执行渲染操作
     });//监听鼠标、键盘事件
 
-
-
-
     this.width = this.three.nativeElement.clientWidth;
     this.height = this.three.nativeElement.clientHeight;
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -116,6 +187,16 @@ export class GuiTestComponent {
     this.renderer.render(this.scene, this.camera); //执行渲染操作
     //绑定DOM
     this.three.nativeElement.append(this.renderer.domElement);
+
+
+    // 渲染循环
+    function render() {
+      that.renderer.render(that.scene, that.camera);
+      // 当gui界面设置obj.bool为true,mesh执行旋转动画
+      if (obj.bool) { mesh.rotateX(0.01).rotateZ(0.01).rotateY(0.01) };
+      requestAnimationFrame(render);
+    }
+    render();
   }
 
   /** 监听窗口尺寸变化 */
@@ -132,4 +213,6 @@ export class GuiTestComponent {
       that.camera.updateProjectionMatrix();
     };
   }
+
+
 }

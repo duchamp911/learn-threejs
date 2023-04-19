@@ -4,12 +4,14 @@ import { CommonModule } from '@angular/common';
 import { FunctionTestRoutingModule } from './function-test-routing.module';
 import { CameraTestComponent } from './camera-test/camera-test.component';
 import { GuiTestComponent } from './gui-test/gui-test.component';
+import { BufferGeometryComponent } from './buffer-geometry/buffer-geometry.component';
 
 
 @NgModule({
   declarations: [
     CameraTestComponent,
-    GuiTestComponent
+    GuiTestComponent,
+    BufferGeometryComponent
   ],
   imports: [
     CommonModule,
