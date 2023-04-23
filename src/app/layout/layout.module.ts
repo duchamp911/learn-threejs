@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { LayoutComponent } from './layout/layout.component';
 import { RouterModule } from '@angular/router';
@@ -11,7 +12,8 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    BrowserModule
   ]
 })
 export class LayoutModule { }

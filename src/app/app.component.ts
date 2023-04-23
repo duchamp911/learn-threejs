@@ -20,7 +20,7 @@ export class AppComponent {
     ]
     // this.arrayToTree(arr, 0)
 
-    console.log(this.arrayToTree(arr))
+    // console.log(this.arrayToTree(arr))
   }
 
   arrayToTree(items: { id: number; name: string; pid: number; }[]) {

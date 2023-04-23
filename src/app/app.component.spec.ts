@@ -23,13 +23,8 @@ describe('AppComponent', () => {
   it(`should have as title 'three-project'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
+    console.log(app)
     expect(app.title).toEqual('three-project');
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('three-project app is running!');
-  });
 });

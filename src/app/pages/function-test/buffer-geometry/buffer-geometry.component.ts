@@ -29,6 +29,8 @@ export class BufferGeometryComponent {
 
   init(): void {
     const that = this;
+    this.width = this.three.nativeElement.clientWidth;
+    this.height = this.three.nativeElement.clientHeight;
 
     // AxesHelper：辅助观察的坐标系
     const axesHelper = new THREE.AxesHelper(150);
@@ -90,15 +92,32 @@ export class BufferGeometryComponent {
     const line = new THREE.Line(lineGeometry, lineMaterial);
     this.scene.add(line);
 
-    const reactangleVertices = new Float32Array([
+    // const reactangleVertices = new Float32Array([
+    //   0, 0, 0, //顶点1坐标
+    //   80, 0, 0, //顶点2坐标
+    //   80, 80, 0, //顶点3坐标
+
+    //   0, 0, 0, //顶点4坐标   和顶点1位置相同
+    //   80, 80, 0, //顶点5坐标  和顶点3位置相同
+    //   0, 80, 0, //顶点6坐标
+    // ]);
+
+    const verticesTest = new Float32Array([
       0, 0, 0, //顶点1坐标
       80, 0, 0, //顶点2坐标
       80, 80, 0, //顶点3坐标
-
-      0, 0, 0, //顶点4坐标   和顶点1位置相同
-      80, 80, 0, //顶点5坐标  和顶点3位置相同
-      0, 80, 0, //顶点6坐标
+      0, 80, 0, //顶点4坐标
     ]);
+
+    // Uint16Array类型数组创建顶点索引数据
+    const indexes = new Uint16Array([
+      // 下面索引值对应顶点位置数据中的顶点坐标
+      0, 1, 2, 0, 2, 3,
+    ])
+    // 索引数据赋值给几何体的index属性
+    // geometry.index = new THREE.BufferAttribute(indexes, 1); //1个为一组
+
+
 
     const reactGeometry = new THREE.BufferGeometry();
 
@@ -138,8 +157,6 @@ export class BufferGeometryComponent {
     controls.addEventListener('change', function () {
       that.renderer.render(that.scene, that.camera); //执行渲染操作
     });//监听鼠标、键盘事件
-    this.width = this.three.nativeElement.clientWidth;
-    this.height = this.three.nativeElement.clientHeight;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     // this.renderer.setClearColor('#387DFF', 0.5); //设置背景颜色
     // 定义threejs输出画布的尺寸(单位:像素px)
